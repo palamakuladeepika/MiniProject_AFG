@@ -1,11 +1,10 @@
 # MiniProject_AI for Games
 
-## Galactic Defender: Alien Assault
+## MAN Vs ZOMBIE
 
 ### Aim : 
 
-To Create a space shooter game where the player controls a spaceship to shoot aliens, avoid collisions, and track score and time.
-
+To Create a Shooter game where the player controls a Man to shoot plant zombies, avoid collisions, and track score and time.
 
 
 ### Algotrithm:
@@ -14,7 +13,7 @@ To Create a space shooter game where the player controls a spaceship to shoot al
 1.Initialize Pygame and set up screen dimensions, colors, and constants.
 2. Load spaceship and alien images and scale them to appropriate sizes.
 3. Define the Bullet class for handling bullet movement and properties.
-4. Define the Alien class for handling alien movement and properties.
+4. Define the zombie class for handling alien movement and properties.
 5. Initialize main game loop:
     -> Process user input for player movement (left, right) and firing bullets (spacebar).
     -> Move bullets upwards and remove them if they go off-screen.
@@ -22,24 +21,20 @@ To Create a space shooter game where the player controls a spaceship to shoot al
     -> Spawn new aliens at random intervals.
 6. Check for collisions between bullets and aliens, updating the score and removing
     the alien and bullet upon collision.
-7. Check for collisions between the player's spaceship and aliens, ending the game
+7. Check for collisions between the player's shooter and zombies, ending the game
     if a collision occurs.
-8. Draw all game elements (spaceship, aliens, bullets, score, time) to the screen.
+8. Draw all game elements to the screen.
 9. Display the game-over screen with score and options to restart or quit.
 10. Restart the game or quit based on user input from the game-over screen.
+
 ```
 
 
 
 ### Program:
 
-```
-Developed by : Palamakula Deepika
-Reg No       : 212221240035
-```
-
-
 ```python
+
 import pygame
 import random
 import time
@@ -51,29 +46,29 @@ pygame.init()
 WIDTH, HEIGHT = 800, 600
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-PLAYER_IMG_SIZE = 50  # Size of the player spaces hip image
-ALIEN_IMG_SIZE = 40   # Size  of the alien image
-BULLET_SPEED = -10
+PLAYER_IMG_SIZE = 50  # Size of the player spaceship image
+ALIEN_IMG_SIZE = 40   # Size of the alien image
+BULLET_SPEED = 10     # Speed of bullets (moving right)
 PLAYER_SPEED = 5
 
 # Set up the display
 win = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Space Shooter")
 
-# Load images (add your spaces hip  and alien images here)
-player_img = pygame.image.load('spaceship.png')  # Add your spaceship image path here
+# Load images (add your spaceship and alien images here)
+player_img = pygame.image.load('manshooter.png')  # Add your spaceship image path here
 player_img = pygame.transform.scale(player_img, (PLAYER_IMG_SIZE, PLAYER_IMG_SIZE))
 
-alien_img = pygame.image.load('alienShip.png')  # Add your alien image path here
+alien_img = pygame.image.load('alienplant.png')  # Add your alien image path here
 alien_img = pygame.transform.scale(alien_img, (ALIEN_IMG_SIZE, ALIEN_IMG_SIZE))
 
 # Bullet class
 class Bullet:
     def __init__(self, x, y):
-        self.rect = pygame.Rect(x, y, 5, 10)
+        self.rect = pygame.Rect(x, y, 10, 5)  # Set a wider bullet for horizontal shooting
 
     def move(self):
-        self.rect.y += BULLET_SPEED  # Move the bullet upwards
+        self.rect.x += BULLET_SPEED  # Move the bullet to the right
 
 # Alien class
 class Alien:
@@ -81,12 +76,12 @@ class Alien:
         self.rect = pygame.Rect(x, y, ALIEN_IMG_SIZE, ALIEN_IMG_SIZE)
 
     def move(self):
-        self.rect.y += 3  #   Move down the screen
+        self.rect.x -= 3  # Move the alien to the left
 
 # Main Game Loop
 def main():
     clock = pygame.time.Clock()
-    player_pos = [WIDTH // 2, HEIGHT - PLAYER_IMG_SIZE]
+    player_pos = [50, HEIGHT // 2 - PLAYER_IMG_SIZE // 2]  # Position player in top-left corner
     bullets, aliens = [], []
     score = 0
     run_game = True
@@ -103,29 +98,29 @@ def main():
                 return
 
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT] and player_pos[0] > 0:
-            player_pos[0] -= PLAYER_SPEED
-        if keys[pygame.K_RIGHT] and player_pos[0] < WIDTH - PLAYER_IMG_SIZE:
-            player_pos[0] += PLAYER_SPEED
+        if keys[pygame.K_UP] and player_pos[1] > 0:
+            player_pos[1] -= PLAYER_SPEED
+        if keys[pygame.K_DOWN] and player_pos[1] < HEIGHT - PLAYER_IMG_SIZE:
+            player_pos[1] += PLAYER_SPEED
         if keys[pygame.K_SPACE]:  # If the space bar is pressed
-            bullets.append(Bullet(player_pos[0] + PLAYER_IMG_SIZE // 2, player_pos[1]))
+            bullets.append(Bullet(player_pos[0] + PLAYER_IMG_SIZE // 2, player_pos[1] + PLAYER_IMG_SIZE // 2))
 
         # Move bullets
         for bullet in bullets:
             bullet.move()  # Call the move method for each bullet
-            if bullet.rect.y < 0:  # Remove bullets that move off-screen
+            if bullet.rect.x > WIDTH:  # Remove bullets that move off-screen (right side)
                 bullets.remove(bullet)
 
         # Move aliens
         new_aliens = []
         for alien in aliens:
             alien.move()
-            if alien.rect.y < HEIGHT:
+            if alien.rect.x > 0:  # Keep aliens on the screen until they go off the left side
                 new_aliens.append(alien)
 
-        # Spawn new aliens randomly
+        # Spawn new aliens randomly on the right side of the screen
         if random.random() < 0.02:  # Adjust spawn rate
-            new_aliens.append(Alien(random.randint(0, WIDTH - ALIEN_IMG_SIZE), -ALIEN_IMG_SIZE))
+            new_aliens.append(Alien(WIDTH, random.randint(0, HEIGHT - ALIEN_IMG_SIZE)))
 
         # Check collisions
         for bullet in bullets:
@@ -157,7 +152,7 @@ def main():
         score_text = font.render(f"Score: {score}", True, WHITE)
         win.blit(score_text, (10, 10))
 
-                # Display elapsed time
+        # Display elapsed time
         elapsed_time = time.time() - start_time  # Calculate elapsed time
         time_text = font.render(f"Time: {elapsed_time:.2f} seconds", True, WHITE)
         win.blit(time_text, (10, 40))
@@ -198,19 +193,21 @@ def game_over_screen(score):
 if __name__ == "__main__":
     main()
 
+
 ```
 
 ### Output:
 
-![Screenshot 2024-11-12 103458](https://github.com/user-attachments/assets/ce8235ed-3ac3-4559-9249-b47fc58d07ee)
+![Screenshot 2024-11-12 114749](https://github.com/user-attachments/assets/d91c39c7-12d2-49b3-b1ba-a17c9a6c3d38)
 
-![Screenshot 2024-11-12 103507](https://github.com/user-attachments/assets/67af5695-49f4-4ebc-97eb-f135c2d02763)
+![Screenshot 2024-11-12 114807](https://github.com/user-attachments/assets/0f1b898f-56e3-4d04-8a1e-e22c0cb426ca)
 
+![Screenshot 2024-11-12 114828](https://github.com/user-attachments/assets/e6fea26d-d6a9-4e43-9e06-50c6a4f7d885)
 
 
 ### Result:
 
-Thus a working space shooter game with player control, alien destruction, and game-over functionality is developed Successfully.
+Thus a working Man vs Zombie game with player control, zombie destruction, and game-over functionality is developed Successfully.
 
 
 
