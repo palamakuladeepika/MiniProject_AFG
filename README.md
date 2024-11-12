@@ -1,4 +1,6 @@
-# MiniProject_AFG
+# MiniProject_AI for Games
+
+## Galactic Defender: Alien Assault
 
 ### Aim : 
 
