@@ -5,7 +5,7 @@
 To Create a space shooter game where the player controls a spaceship to shoot aliens, avoid collisions, and track score and time.
 
 ### Algotrithm:
-
+```
 1.Initialize Pygame and set up screen dimensions, colors, and constants.
 2. Load spaceship and alien images and scale them to appropriate sizes.
 3. Define the Bullet class for handling bullet movement and properties.
@@ -20,7 +20,7 @@ To Create a space shooter game where the player controls a spaceship to shoot al
 8. Draw all game elements (spaceship, aliens, bullets, score, time) to the screen.
 9. Display the game-over screen with score and options to restart or quit.
 10. Restart the game or quit based on user input from the game-over screen.
-
+```
 ### Program:
 ```
 Developed by : Palamakula Deepika
